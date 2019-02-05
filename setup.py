@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-# coding=utf-8
 from setuptools import setup
 
 with open("README.md") as fh:
@@ -16,7 +14,7 @@ setup(
     url='https://github.com/alashkov83/CDbw',
     license='MIT License',
     platforms=['any'],
-    author='Sergey Rubinsky, Alexander Lashkov',
+    author='Sergey Rubinsky, Alexander Lashkov, Polina Eistrikh-Heller',
     author_email='alashkov83@gmail.com',
     maintainer='Alexander Lashkov',
     classifiers=[

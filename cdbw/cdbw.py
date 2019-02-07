@@ -98,31 +98,6 @@ def bind_noise_lab(X, labels, metric):
     return labels
 
 
-def sep_noise_lab(labels):
-    """
-    Definition of each noise point as a separate cluster
-
-    Parameters
-    ----------
-    labels : array-like, shape (n_samples,)
-        Predicted labels for each sample.  (-1 - for noise)
-
-    Returns
-    -------
-    labels : array-like, shape (n_samples,)
-        Modified predicted labels for each sample. to a single data point.
-        Each data points which label = -1 was defined as a separate cluster.
-    """
-    labels = labels.copy()
-    max_label = np.max(labels)
-    j = max_label + 1
-    for i in range(len(labels)):
-        if labels[i] == -1:
-            labels[i] = j
-            j += 1
-    return labels
-
-
 def comb_noise_lab(labels):
     """
     Combining all noise points into one cluster
@@ -330,7 +305,7 @@ def closest_rep(X, n_clusters, rep_dic, n_rep, metric, distvec):
     return middle_point, dist_min, n_cl_rep
 
 
-def art_rep(X, n_clusters, rep_dic, mean_arr, s):
+def art_rep(X, n_clusters, rep_dic, n_rep, mean_arr, s):
     """
     Calculate of the art representative points
 
@@ -343,6 +318,8 @@ def art_rep(X, n_clusters, rep_dic, mean_arr, s):
         Number of clusters.
     rep_dic : dict {i: indexes}
         Indexes of representative points for each clusters, i - No. of cluster, indexes - array of indexes.
+    n_rep : array_like shape (n_clusters,)
+        Number of representative points in each cluster.
     mean_arr : array_like shape (n_clusters, dimension)
         Coordinates of the centroid of each cluster.
     s : int,
@@ -356,6 +333,8 @@ def art_rep(X, n_clusters, rep_dic, mean_arr, s):
     """
     a_rep_shell = defaultdict(list)
     for i in range(n_clusters):
+        if n_rep[i] == 1:
+            raise ValueError('Cluster No. {:d} obtain only 1 point'.format(i))
         for x in rep_dic[i]:
             for k in range(1, s + 1):
                 a_rep_shell[i, k - 1].append((1 - (k / s)) * X[x] + (k / s) * mean_arr[i])
@@ -416,7 +395,7 @@ def compactness(X, labels, n_clusters, stdev, a_rep_shell, n_rep, n_points_in_cl
     compact = np.sum(intra_dens) / s
     intra_change = 0
     for l in range(s - 1):
-        intra_change += np.sum(abs(intra_dens[l + 1] - intra_dens[l])) / (s - 1)
+        intra_change += abs(intra_dens[l + 1] - intra_dens[l]) / (s - 1)
     cohesion = compact / (1 + intra_change)
     return compact, cohesion
 
@@ -472,13 +451,12 @@ def separation(X, labels, n_clusters, stdev, middle_point, dist_min, n_cl_rep, n
     for i in range(n_clusters):
         for j in range(n_clusters):
             if i > j:
-                dens_mean[i, j] = np.mean(np.array(dist_min[(i, j)]) * np.array(card1[(i, j)])) / (
-                        n_points_in_cl[i] + n_points_in_cl[j])
-                dist_mm[i, j] = np.mean(dist_min[(i, j)])
+                dens_mean[i, j] = np.mean(np.array(dist_min[i, j]) * np.array(card1[i, j]))
+                dist_mm[i, j] = np.mean(dist_min[i, j])
             elif i < j:
-                dens_mean[i, j] = np.mean(np.array(dist_min[(j, i)]) * np.array(card1[(j, i)])) / (
-                        n_points_in_cl[j] + n_points_in_cl[i])
-                dist_mm[i, j] = np.mean(dist_min[(j, i)])
+                dens_mean[i, j] = np.mean(np.array(dist_min[j, i]) * np.array(card1[j, i]))
+                dist_mm[i, j] = np.mean(dist_min[j, i])
+            dens_mean[i, j] /= (n_points_in_cl[i] + n_points_in_cl[j])
     inter_dens = np.sum(np.max(dens_mean, axis=0)) / (2 * n_clusters * stdev)
     dist_m = np.sum(np.min(dist_mm, axis=0)) / n_clusters
     sep = dist_m / (1 + inter_dens)
@@ -506,7 +484,6 @@ def CDbw(X, labels, metric="euclidean", alg_noise='comb', intra_dens_inf=False, 
     alg_noise : str,
         Algorithm for recording noise points.
         'comb' - combining all noise points into one cluster (default)
-        'sep' - definition of each noise point as a separate cluster
         'bind' -  binding of each noise point to the cluster nearest from it
         'filter' - filtering noise points
     intra_dens_inf : bool,
@@ -531,8 +508,6 @@ def CDbw(X, labels, metric="euclidean", alg_noise='comb', intra_dens_inf=False, 
         raise ValueError("No. of unique labels must be > 1 and < n_samples")
     if s < 2:
         raise ValueError("Parameter s must be > 2")
-    if alg_noise == 'sep':
-        labels = sep_noise_lab(labels)
     elif alg_noise == 'bind':
         labels = bind_noise_lab(X, labels, metric=metric)
     elif alg_noise == 'comb':
@@ -544,7 +519,7 @@ def CDbw(X, labels, metric="euclidean", alg_noise='comb', intra_dens_inf=False, 
     n_clusters, stdev, dimension = prep(X, labels)
     rep_dic, mean_arr, n_rep, n_points_in_cl = rep(X, labels, n_clusters, dimension)
     middle_point, dist_min, n_cl_rep = closest_rep(X, n_clusters, rep_dic, n_rep, metric, distvec)
-    a_rep_shell = art_rep(X, n_clusters, rep_dic, mean_arr, s)
+    a_rep_shell = art_rep(X, n_clusters, rep_dic, n_rep, mean_arr, s)
     compact, cohesion = compactness(X, labels, n_clusters, stdev, a_rep_shell, n_rep, n_points_in_cl, distvec, s)
     if (np.isinf(compact) or np.isnan(compact)) and not intra_dens_inf:
         return 0

@@ -4,7 +4,7 @@ import numpy as np
 
 from cdbw import CDbw
 
-epsilon = 1e-12
+epsilon = 1e-16
 
 # 1 - 3D DATA TEST 1
 data_3d_1 = np.load("xyz.npy")
@@ -26,25 +26,25 @@ labels_2d_ab = np.load("labelssos.npy")
 class Data3D1(unittest.TestCase):
 
     def test_compact(self):
-        value = 0.0005166421642678491
+        value = 0.020238323923050704
         compact = CDbw(data_3d_1, labels_3d_1, multipliers=True)[0]
         self.assertTrue(abs(value - compact) < epsilon,
                         msg='test_Data_3D_1 compact = {:e}, must be {:e}'.format(compact, value))
 
     def test_cohesion(self):
-        value = 0.0005163348165265217
+        value = 0.020167225676202064
         cohesion = CDbw(data_3d_1, labels_3d_1, multipliers=True)[1]
         self.assertTrue(abs(value - cohesion) < epsilon,
                         msg='test_Data_3D_1 cohesion = {:e}, must be {:e}'.format(cohesion, value))
 
     def test_separation(self):
-        value = 8.425009181172841
+        value = 5.117729198421542
         separation = CDbw(data_3d_1, labels_3d_1, multipliers=True)[2]
         self.assertTrue((abs(value - separation) < epsilon),
                         msg='test_Data_3D_1 separation = {:e}, must be {:e}'.format(separation, value))
 
     def test_cdbw(self):
-        value = 2.247458289215871e-06
+        value = 0.002088805501239885
         cdbw = CDbw(data_3d_1, labels_3d_1)
         self.assertTrue(abs(value - cdbw) < epsilon,
                         msg='test_Data_3D_1 cdbw = {:e}, must be {:e}'.format(cdbw, value))
@@ -53,25 +53,25 @@ class Data3D1(unittest.TestCase):
 class Data3D2(unittest.TestCase):
 
     def test_compact(self):
-        value = 0.0005908076852240068
+        value = 0.030106505876089613
         compact = CDbw(data_3d_2, labels_3d_2, multipliers=True)[0]
         self.assertTrue(abs(value - compact) < epsilon,
                         msg='test_Data_3D_2 compact = {:e}, must be {:e}'.format(compact, value))
 
     def test_cohesion(self):
-        value = 0.0005904808602705167
+        value = 0.029839934787904636
         cohesion = CDbw(data_3d_2, labels_3d_2, multipliers=True)[1]
         self.assertTrue(abs(value - cohesion) < epsilon,
                         msg='test_Data_3D_2 cohesion = {:e}, must be {:e}'.format(cohesion, value))
 
     def test_separation(self):
-        value = 5.3479142860422
+        value = 4.337501690166292
         separation = CDbw(data_3d_2, labels_3d_2, multipliers=True)[2]
         self.assertTrue(abs(value - separation) < epsilon,
                         msg='test_Data_3D_2 separation = {:e}, must be {:e}'.format(separation, value))
 
     def test_cdbw(self):
-        value = 1.8656767482206592e-06
+        value = 0.003896708164603387
         cdbw = CDbw(data_3d_2, labels_3d_2)
         self.assertTrue(abs(value - cdbw) < epsilon,
                         msg='test_Data_3D_2 cdbw = {:e}, must be {:e}'.format(cdbw, value))
@@ -80,25 +80,25 @@ class Data3D2(unittest.TestCase):
 class Data2DBlobs(unittest.TestCase):
 
     def test_compact(self):
-        value = 1.0296372965635063
+        value = 0.45727766830363764
         compact = CDbw(data_2d_bl, labels_2d_bl, multipliers=True)[0]
         self.assertTrue(abs(value - compact) < epsilon,
                         msg='test_Data_2D_Blobs compact = {:e}, must be {:e}'.format(compact, value))
 
     def test_cohesion(self):
-        value = 0.6825376143504982
+        value = 0.32071421306947445
         cohesion = CDbw(data_2d_bl, labels_2d_bl, multipliers=True)[1]
         self.assertTrue(abs(value - cohesion) < epsilon,
                         msg='test_Data_2D_Blobs cohesion = {:e}, must be {:e}'.format(cohesion, value))
 
     def test_separation(self):
-        value = 0.4065978613279437
+        value = 0.6346662881857889
         separation = CDbw(data_2d_bl, labels_2d_bl, multipliers=True)[2]
         self.assertTrue(abs(value - separation) < epsilon,
                         msg='test_Data_2D_Blobs separation = {:e}, must be {:e}'.format(separation, value))
 
     def test_cdbw(self):
-        value = 0.28574322744538305
+        value = 0.09307726853513183
         cdbw = CDbw(data_2d_bl, labels_2d_bl)
         self.assertTrue(abs(value - cdbw) < epsilon,
                         msg='test_Data_2D_Blobs cdbw = {:e}, must be {:e}'.format(cdbw, value))
@@ -107,25 +107,25 @@ class Data2DBlobs(unittest.TestCase):
 class Data2DMoons(unittest.TestCase):
 
     def test_compact(self):
-        value = 0.6056587949929342
+        value = 0.5001327835563026
         compact = CDbw(data_2d_m, labels_2d_m, multipliers=True)[0]
         self.assertTrue(abs(value - compact) < epsilon,
                         msg='test_Data_2D_Moons compact = {:e}, must be {:e}'.format(compact, value))
 
     def test_cohesion(self):
-        value = 0.5799329699706257
+        value = 0.4583940701869082
         cohesion = CDbw(data_2d_m, labels_2d_m, multipliers=True)[1]
         self.assertTrue(abs(value - cohesion) < epsilon,
                         msg='test_Data_2D_Moons cohesion = {:e}, must be {:e}'.format(cohesion, value))
 
     def test_separation(self):
-        value = 0.6473693757630843
+        value = 0.27079184296654096
         separation = CDbw(data_2d_m, labels_2d_m, multipliers=True)[2]
         self.assertTrue(abs(value - separation) < epsilon,
                         msg='test_Data_2D_Moons separation = {:e}, must be {:e}'.format(separation, value))
 
     def test_cdbw(self):
-        value = 0.2273829930370780
+        value = 0.06208116987528693
         cdbw = CDbw(data_2d_m, labels_2d_m)
         self.assertTrue(abs(value - cdbw) < epsilon,
                         msg='test_Data_2D_Moons cdbw = {:e}, must be {:e}'.format(cdbw, value))
@@ -134,25 +134,25 @@ class Data2DMoons(unittest.TestCase):
 class Data2DAnisoBlobs(unittest.TestCase):
 
     def test_compact(self):
-        value = 1.542671293857125
+        value = 1.0455304698351948
         compact = CDbw(data_2d_ab, labels_2d_ab, multipliers=True)[0]
         self.assertTrue(abs(value - compact) < epsilon,
                         msg='test_Data_2D_AnisoBlobs compact = {:e}, must be {:e}'.format(compact, value))
 
     def test_cohesion(self):
-        value = 1.046377171756573
+        value = 0.6647251466801855
         cohesion = CDbw(data_2d_ab, labels_2d_ab, multipliers=True)[1]
         self.assertTrue(abs(value - cohesion) < epsilon,
                         msg='test_Data_2D_AnisoBlobs cohesion = {:e}, must be {:e}'.format(cohesion, value))
 
     def test_separation(self):
-        value = 0.25110619723766703
+        value = 0.3085609726166483
         separation = CDbw(data_2d_ab, labels_2d_ab, multipliers=True)[2]
         self.assertTrue(abs(value - separation) < epsilon,
                         msg='test_Data_2D_AnisoBlobs separation = {:e}, must be {:e}'.format(separation, value))
 
     def test_cdbw(self):
-        value = 0.40533964766238123
+        value = 0.21444691221568293
         cdbw = CDbw(data_2d_ab, labels_2d_ab)
         self.assertTrue(abs(value - cdbw) < epsilon,
                         msg='test_Data_2D_AnisoBlobs cdbw = {:e}, must be {:e}'.format(cdbw, value))

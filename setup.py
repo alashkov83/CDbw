@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='cdbw',
-    version='0.1.1',
+    version='0.2',
     python_requires='>=2.7',
     packages=['cdbw', ],
     url='https://github.com/alashkov83/CDbw',
